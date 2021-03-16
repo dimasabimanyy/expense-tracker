@@ -1,11 +1,7 @@
-import React from 'react'
+import React from "react";
 
-function Header() {
-    return (
-        <h2>
-            Expense
-        </h2>
-    )
-}
+const Header = () => {
+  return <h2>Expense</h2>;
+};
 
-export default Header
+export default Header;

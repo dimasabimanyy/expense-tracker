@@ -1,5 +1,4 @@
 import React, { createContext, useReducer } from "react";
-import AppReducer from './AppReducer'
 
 // Initial state
 const initialState = {
@@ -11,15 +10,54 @@ const initialState = {
   ],
 };
 
-// Create context
-export const GLobalContext = createContext(initialState)
+function appReducer(state, action) {
+  switch (action.type) {
+    case "DELETE_TRANSACTION":
+      return {
+        ...state,
+        transactions: state.transactions.filter(
+          (transaction) => transaction.id !== action.payload
+        ),
+      };
+    case "ADD_TRANSACTION":
+      return {
+        transactions: [action.payload, ...state.transactions],
+      };
+    default:
+      return state;
+  }
+}
+
+export const GLobalContext = createContext(initialState);
 
 // Provider component
-export const GlobalProvider = ({ children }) => {   
-    const [state, dispatch] = useReducer(AppReducer, initialState);
+export const GlobalProvider = ({ children }) => {
+  const [state, dispatch] = useReducer(appReducer, initialState);
 
-    return (
-    <GLobalContext.Provider value={{ transactions : state.transactions }}>
-        {children}
-    </GLobalContext.Provider>)
-}
+  // Actions
+  function deleteTransaction(id) {
+    dispatch({
+      type: "DELETE_TRANSACTION",
+      payload: id,
+    });
+  }
+
+  function addTransaction(transaction) {
+    dispatch({
+      type: "ADD_TRANSACTION",
+      payload: transaction,
+    });
+  }
+
+  return (
+    <GLobalContext.Provider
+      value={{
+        transactions: state.transactions,
+        deleteTransaction,
+        addTransaction,
+      }}
+    >
+      {children}
+    </GLobalContext.Provider>
+  );
+};
